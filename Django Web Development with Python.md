@@ -35,11 +35,43 @@ add `app_name = "main"` (this will be useful for automatically creating URLs)
 go to `main/views.py`  
 add `from django.http import render`  
 add `from django.http import HttpResponse`  
-
-add  
+add:  
 
     def homepage(request):
         return HttpResponse("Wow this is an <strong>awesome</strong> tutorial")
 
 
 ## [Video 2: Models](https://pythonprogramming.net/models-django-tutorial/)
+Most of the value of Djano comes from the abstraction provided by models.
+
+go to `main/models.py`  
+add:
+
+    class Tutorial(models.Model):
+      tutorial_title = models.CharField(max_length=200)
+      tutorial_content = models.TextField()
+      tutorial_published = models.DateTimeField("date published")
+
+    def __str__(self):
+      return self.tutorial_title
+
+Must install new apps before you can add models  
+go to `mysite/settings.py`  
+under `INSTALLED_APPS` add `'main.apps.MainConfig',`  
+
+
+Every time you add/change a model you must migrate
+> python3 manage.py makemigrations  
+> python3 manage.py migrate  
+
+To get a shell to manage the website (useful for troubleshooting)  
+Example of using shell to insert data (NOT RECOMMENDED)  
+> python3 manage.py shell  
+>> from main.models import Tutorial  
+>> from django.utils import timezone  
+>> new_tutorial = Tutorial(tutorial_title="To be", tutorial_content="...or not to be", tutorial_published=timezone.now())  
+>> new_tutorial.save()  
+>> Tutorial.objects.all()
+
+
+## [Video 3: Admin and Apps](https://pythonprogramming.net/admin-apps-django-tutorial/)
