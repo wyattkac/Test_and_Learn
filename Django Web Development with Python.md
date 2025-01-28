@@ -1,5 +1,6 @@
 
 # Django Web Development with Python
+A Tutorial from [pythonprogramming.net](pythonprogramming.net), or [sentdex on YouTube](https://www.youtube.com/@sentdex)
 
 ## [Video 1: Introduction](https://pythonprogramming.net/django-web-development-python-tutorial/)
 
@@ -75,3 +76,40 @@ Example of using shell to insert data (NOT RECOMMENDED)
 
 
 ## [Video 3: Admin and Apps](https://pythonprogramming.net/admin-apps-django-tutorial/)
+Start by creating a superuser  
+> python3 manage.py createsuperuser  
+
+Navigate to `http://127.0.0.1:8000/admin`  
+Here you can add groups and users, and modify your website  
+
+To modifiy the website you first have to register your models  
+go to `main/admin.py`  
+add `from .models import Tutorial`  
+add `admin.site.register(Tutorial)`  
+If you wanted to only see certain fields, or change how fields are displayed, add:  
+
+    class TutorialAdmin(admin.ModelAdmin):
+      fields = ["tutorial_title",
+                "tutorial_content",
+                "tutorial_published",]
+    admin.site.register(Tutorial, TutorialAdmin)
+
+or, if you want to change how things are presented:  
+
+    class TutorialAdmin(admin.ModelAdmin):
+      fieldsets = [
+        ("Title/date", {"fields": ["tutorial_title", "tutorial_published"]}),
+        ("Content", {"fields": ["tutorial_content"]})
+      ]
+    admin.site.register(Tutorial, TutorialAdmin)
+
+To add a default to a model's field (in this case making tutorial_published=now):  
+Go to `main/models.py`  
+add `from django.utils import timezone`  
+change `tutorial_published = models.DateTimeField("date published")` to `tutorial_published = models.DateTimeField("date published", default=timezone.now)`  
+And since you changed the models file, migrate
+
+It's a pain to edit out of a text box, so let's install an editor  
+HE USES TINYMCE4-LITE, WHICH IS NO LONGER SUPPORTED  
+
+## [Video 4: Views and Templates](https://pythonprogramming.net/views-templates-django-tutorial/)
