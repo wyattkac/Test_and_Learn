@@ -95,7 +95,7 @@ If you wanted to only see certain fields, or change how fields are displayed, ad
                 "tutorial_published",]
     admin.site.register(Tutorial, TutorialAdmin)
 
-or, if you want to change how things are presented:  
+or, if you want to change how things are presented, add:  
 
     class TutorialAdmin(admin.ModelAdmin):
       fieldsets = [
@@ -112,12 +112,59 @@ And since you changed the models file, migrate
 
 It's a pain to edit out of a text box, so let's install an editor  
 HE USES TINYMCE4-LITE, WHICH IS NO LONGER SUPPORTED  
+[Here is the django-tinymce page](https://pypi.org/project/django-tinymce/) and [here is a tutorial](https://www.geeksforgeeks.org/integrating-tinymce-with-django/)
+> pip install django-tinymce
+
+go to `mysite/settings.py`  
+under `INSTALLED_APPS` add `'tinymce',`  
+add:
+
+    TINYMCE_DEFAULT_CONFIG = {
+        'cleanup_on_startup': True,
+        'custom_undo_redo_levels': 20,
+        'selector': 'textarea',
+        'theme': 'silver',
+        'plugins': '''
+                textcolor save link image media preview codesample contextmenu
+                table code lists fullscreen  insertdatetime  nonbreaking
+                contextmenu directionality searchreplace wordcount visualblocks
+                visualchars code fullscreen autolink lists  charmap print  hr
+                anchor pagebreak
+                ''',
+        'toolbar1': '''
+                fullscreen preview bold italic underline | fontselect,
+                fontsizeselect  | forecolor backcolor | alignleft alignright |
+                aligncenter alignjustify | indent outdent | bullist numlist table |
+               | link image media | codesample |
+                ''',
+        'toolbar2': '''
+                visualblocks visualchars |
+                charmap hr pagebreak nonbreaking anchor |  code |
+                ''',
+        'contextmenu': 'formats | link image',
+        'menubar': True,
+        'statusbar': True,
+    }
+
+go to `mysite/urls.py`
+under `urlpatterns` add `path('tinymce/', include('tinymce.urls')),`
+
+go to `main/admin.py`  
+add `from django.db import models`  
+add `from tinymce.widgets import TinyMCE`  
+under `Class TutorialAdmin(admin.ModelAdmin):` add:  
+
+    formfield_overrides = {
+        models.TextField: {'widget': TinyMCE()}
+    }
+
 
 
 ## [Video 4: Views and Templates](https://pythonprogramming.net/views-templates-django-tutorial/)
 This is how most pages are served
 
 go to `main/views.py`  
+add:
 
     from .models import Tutorial
 
@@ -131,6 +178,7 @@ NOTE: to refrence variable `{{ variable }}`
 NOTE: to do logic `{%  %}`  
 NOTE: He pulled in CSS and Javascript with TINYMCE4
 NOTE: Need to know html to style things
+add:
 
     <body>
       {% for tut in tutorials %}
