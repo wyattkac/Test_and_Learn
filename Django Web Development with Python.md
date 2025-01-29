@@ -2,6 +2,7 @@
 # Django Web Development with Python
 A Tutorial from [pythonprogramming.net](pythonprogramming.net), or [sentdex on YouTube](https://www.youtube.com/@sentdex)
 
+
 ## [Video 1: Introduction](https://pythonprogramming.net/django-web-development-python-tutorial/)
 
 [This is the Django homepage.](https://www.djangoproject.com/) Check it out for documentation. They also have a good tutorial.  
@@ -112,4 +113,33 @@ And since you changed the models file, migrate
 It's a pain to edit out of a text box, so let's install an editor  
 HE USES TINYMCE4-LITE, WHICH IS NO LONGER SUPPORTED  
 
+
 ## [Video 4: Views and Templates](https://pythonprogramming.net/views-templates-django-tutorial/)
+This is how most pages are served
+
+go to `main/views.py`  
+
+    from .models import Tutorial
+
+    def homepage(request):
+      return render(request=request, 
+                    template_name="main/home.html",
+                    context={"tutorials": Tutorial.objects.all})
+
+create `main/templates/main/home.html`  
+NOTE: to refrence variable `{{ variable }}`  
+NOTE: to do logic `{%  %}`  
+NOTE: He pulled in CSS and Javascript with TINYMCE4
+NOTE: Need to know html to style things
+
+    <body>
+      {% for tut in tutorials %}
+        <p>{{tut.tutorial_title}}</p>
+        <p>{{tut.tutorial_published}}</p>
+        <p>{{tut.tutorial_content|safe}}</p>
+        <br><br>
+      {% endfor %}
+    </body>
+
+
+## [Video 5: CSS](https://pythonprogramming.net/css-django-tutorial/)
