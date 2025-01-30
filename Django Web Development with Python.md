@@ -176,8 +176,8 @@ add:
 create `main/templates/main/home.html`  
 NOTE: to refrence variable `{{ variable }}`  
 NOTE: to do logic `{%  %}`  
-NOTE: He pulled in CSS and Javascript with TINYMCE4
-NOTE: Need to know html to style things
+NOTE: He pulled in CSS and Javascript with TINYMCE4  
+NOTE: Need to know html to style things  
 add:
 
     <body>
@@ -191,3 +191,41 @@ add:
 
 
 ## [Video 5: CSS](https://pythonprogramming.net/css-django-tutorial/)
+We're using a CSS framework called [Materialize](https://materializecss.com/) so we have to do less design work  
+This webpage has code for most of the things we'll want to do  
+
+go to `main/templates/main/home.html`  
+to begin using Materialize add:  
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+We'll want to use `extends` and `include` in our template for things like navbars (so when we change it we only have to change it one place)  
+create `main/templates/main/header.html`  
+put the header/footer/import statements in, and put the following where you want unique content to go:  
+
+    {% block content %}
+    {% endblock %}
+
+go to `main/templates/main/home.html`  
+rewrite to say:  
+
+    {% extends 'main/header.html' %}
+
+    {% block content %}
+    unique_content
+    {% endblock %}
+
+To personalize the color's, we'll need to download [Sass from Materialize](https://materializecss.com/getting-started.html), and a compiler like [Koala Sass](http://koala-app.com/)  
+Go to `materialize-src-v1.0.0/materialize-src/sass/components/_color-variables.scss`  
+Modifiy the colors to be whatever you like (they are in hex)  
+Compile in Koala  
+Put the created `materialize.css` into `main/static/main/css`  
+Go to `main/templates/main/header.html`  
+replace `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">` with `<link rel="stylesheet" href="{% static "main/css/materialize.css" %}">`  
+
+
+## [Video 6: User Registration](https://pythonprogramming.net/user-registration-django-tutorial/)
