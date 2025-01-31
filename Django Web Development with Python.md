@@ -21,7 +21,7 @@ Create a new app
 And start the server  
 > python3 manage.py runserver  
 
-Copy `mysite/urls.py` to `main/urls.py`
+copy `mysite/urls.py` to `main/urls.py`
 
 go to `mysite/urls.py`  
 add `from django.urls import include`  
@@ -105,7 +105,7 @@ or, if you want to change how things are presented, add:
     admin.site.register(Tutorial, TutorialAdmin)
 
 To add a default to a model's field (in this case making tutorial_published=now):  
-Go to `main/models.py`  
+go to `main/models.py`  
 add `from django.utils import timezone`  
 change `tutorial_published = models.DateTimeField("date published")` to `tutorial_published = models.DateTimeField("date published", default=timezone.now)`  
 And since you changed the models file, migrate
@@ -220,12 +220,86 @@ rewrite to say:
     {% endblock %}
 
 To personalize the color's, we'll need to download [Sass from Materialize](https://materializecss.com/getting-started.html), and a compiler like [Koala Sass](http://koala-app.com/)  
-Go to `materialize-src-v1.0.0/materialize-src/sass/components/_color-variables.scss`  
-Modifiy the colors to be whatever you like (they are in hex)  
-Compile in Koala  
-Put the created `materialize.css` into `main/static/main/css`  
-Go to `main/templates/main/header.html`  
+go to `materialize-src-v1.0.0/materialize-src/sass/components/_color-variables.scss`  
+modifiy the colors to be whatever you like (they are in hex)  
+compile in Koala  
+put the created `materialize.css` into `main/static/main/css`  
+go to `main/templates/main/header.html`  
 replace `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">` with `<link rel="stylesheet" href="{% static "main/css/materialize.css" %}">`  
 
 
 ## [Video 6: User Registration](https://pythonprogramming.net/user-registration-django-tutorial/)
+We'll use the built in user model since it's good enough for most use cases.
+
+> python3 manage.py shell  
+>> from django.contrib.auth.models import User  
+>> dir(User)  
+
+create main/templates/main/register.html  
+add:  
+
+    {% extends 'main/header.html' %}
+
+    {% block content %}
+
+      <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+      </form>
+
+      If you already have an account <a href="/login" target="blank"><strong>login</strong></a> instead.
+
+    {% endblock %}
+
+go to `main/views.py`  
+add:  
+
+    from django.contrib.auth.forms import UserCreationForm
+
+    def register(request):
+      form = UserCreationForm
+      return render(request = request,
+                    template_name = "main/register.html",
+                    context={"form":form})
+
+go to `main/urls.py`  
+under `urlpatterns` add `path("register/", views.register, name="register"),`
+
+It look weird when it goes all the way to the edge, to fix:  
+go to `main/templates/main/header.html`  
+And wrap the block content in a container like so:
+
+    <div class="container">
+      <br>
+      {% block content %}
+      {% endblock %}
+    </div>
+
+There's no way to submit the form, so insert a button  
+go to `main/templates/main/register.html`  
+And inside the form add `<button style="background-color:#F4EB16; color:blue" class="btn btn-outline-info" type="submit">Sign Up</button>`
+
+Now to make it so the button does somthing  
+go to `views.py`  
+under `def register(request):` add:  
+
+    from django.shortcuts import redirect
+    from django.contrib.auth import logout, authenticate, login
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            login(request, user)
+            return redirect("main:homepage")
+        else:
+            for msg in form.error_messages:
+                print(form.error_messages[msg])
+
+            return render(request = request,
+                          template_name = "main/register.html",
+                          context={"form":form})
+
+
+## [Video 7: Messages]()
