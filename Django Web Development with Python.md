@@ -205,7 +205,7 @@ to begin using Materialize add:
 
 We'll want to use `extends` and `include` in our template for things like navbars (so when we change it we only have to change it one place)  
 create `main/templates/main/header.html`  
-put the header/footer/import statements in, and put the following where you want unique content to go:  
+put the header/footer/import statements in, and put the following where you want unique content to go (go to [here](https://pythonprogramming.net/css-django-tutorial/) to see the full code):  
 
     {% block content %}
     {% endblock %}
@@ -302,4 +302,30 @@ under `def register(request):` add:
                           context={"form":form})
 
 
-## [Video 7: Messages]()
+## [Video 7: Messages](https://pythonprogramming.net/messages-django-tutorial/)
+go to `main/views.py`  
+add `from django.contrib import messages`  
+under `def register(request)` under `form.is_valid()` add `messages.success(request, f"New Account Created: {username}")`  
+under `def register(request)` under `form.is_valid()` add `messages.info(request, f"You are now logged in as {username}")`  
+under `def register(request)` under `for msg in form.error_messages` replace `print(form.error_messages[msg])` with `messages.error(request, f"{msg}: {form.error_messages[msg]}")`  
+
+we probably want to handle messages sitewide, handle them under header  
+go to `main/templates/main/header.html`  
+above the container, add:  
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success'%}
+                <script>M.toast({html: "{{message}}", classes: 'green rounded', displayLength:2000});</script>
+            {% elif message.tags == 'info'%}
+                <script>M.toast({html: "{{message}}", classes: 'blue rounded', displayLength:2000});</script>
+            {% elif message.tags == 'warning'%}
+                <script>M.toast({html: "{{message}}", classes: 'orange rounded', displayLength:10000});</script>
+            {% elif message.tags == 'error'%}
+                <script>M.toast({html: "{{message}}", classes: 'red rounded', displayLength:10000});</script>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+now add if statements to the navbar (go to [here](https://pythonprogramming.net/messages-django-tutorial/) to see the full code) to show login/logout depending on state
+
